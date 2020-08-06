@@ -12,7 +12,6 @@ import (
 	"github.com/ChimeraCoder/anaconda"
 	"github.com/aws/aws-lambda-go/lambda"
 	//"github.com/aws/aws-lambda-go/lambda"
-	"github.com/joho/godotenv"
 )
 
 type APICred struct {
@@ -31,19 +30,15 @@ type QuoteObject struct {
 	Quote   string `json:"quote"`
 }
 
+// TODO: Set up error logging for env variables
 func LoadEnv() (env APICred) {
-	err := godotenv.Load()
-
 	// Establish credentials for accessing API
+	// Pull Env variables from AWS
 	env = APICred{
 		os.Getenv("API_KEY"),
 		os.Getenv("API_SECRET"),
 		os.Getenv("ACCESS_TOKEN"),
 		os.Getenv("ACCESS_SECRET")}
-	// Credential error checking
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 
 	return env
 }
@@ -86,6 +81,7 @@ func GrabQuote() string {
 	return quote_to_serv
 }
 
+// TODO: Set up a return for sending to CloudWatch Logs
 func SendTweet() {
 	env := LoadEnv()
 
@@ -104,5 +100,5 @@ func SendTweet() {
 
 func main() {
 	lambda.Start(SendTweet)
-	//SendTweet()
+	//SendTweet(context.TODO())
 }
